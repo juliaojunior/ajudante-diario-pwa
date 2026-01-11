@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,71 +10,55 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Gradiente principal (Roxo Lilás → Quase Preto)
-        'gradient-start': '#B794F6',
-        'gradient-end': '#1A1A1A',
-        
-        // Glassmorphism
-        'glass-bg': 'rgba(255, 255, 255, 0.1)',
-        'glass-border': 'rgba(255, 255, 255, 0.2)',
-        'glass-shadow': 'rgba(0, 0, 0, 0.3)',
-        
-        // Texto
-        'text-primary': '#FFFFFF',
-        'text-secondary': 'rgba(255, 255, 255, 0.7)',
-        
-        // Cores funcionais (mantidas do original para acessibilidade)
-        'senior-blue': '#0056D2',
-        'senior-yellow': '#F9A825',
-        'senior-red': '#D32F2F',
-        
-        // Aliases semânticos
-        primary: '#0056D2',
-        secondary: '#F9A825',
-        destructive: '#D32F2F',
-      },
-      fontFamily: {
-        display: ['Lexend', 'sans-serif'],
-        body: ['Noto Sans', 'sans-serif'],
-      },
-      fontSize: {
-        'xs': '0.875rem',   // 14px
-        'sm': '1rem',       // 16px
-        'base': '1.125rem', // 18px
-        'lg': '1.25rem',    // 20px
-        'xl': '1.5rem',     // 24px
-        '2xl': '2rem',      // 32px
-        '3xl': '2.5rem',    // 40px
-        '4xl': '3rem',      // 48px
-        '5xl': '5rem',      // 80px (timer)
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
       borderRadius: {
-        'sm': '0.5rem',
-        'md': '1rem',
-        'lg': '1.5rem',
-        'xl': '2rem',
-        'full': '9999px',
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ["Lexend", "Noto Sans", "system-ui", "sans-serif"],
+        display: ["Lexend", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        'glass': '0 8px 32px rgba(0, 0, 0, 0.3)',
-        'neomorph': '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-      },
-      backdropBlur: {
-        'glass': '10px',
-      },
-      spacing: {
-        '1': '0.25rem',
-        '2': '0.5rem',
-        '3': '0.75rem',
-        '4': '1rem',
-        '6': '1.5rem',
-        '8': '2rem',
-        '12': '3rem',
-        '16': '4rem',
+        neomorph: "8px 8px 16px rgba(0, 0, 0, 0.1), -4px -4px 12px rgba(255, 255, 255, 0.7)",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 
 export default config;

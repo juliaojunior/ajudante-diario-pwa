@@ -3,140 +3,109 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
-import { NavigationBar } from "@/components/organisms/NavigationBar";
-import { GlassContainer } from "@/components/atoms/GlassContainer";
-import { Text } from "@/components/atoms/Text";
-import { Input } from "@/components/atoms/Input";
-import type { ShoppingCategory } from "@/lib/types";
+import { Button } from "@/components/ui/button";
 
-const emojis = [
-  "🍎", "🥛", "🍞", "🥚", "🧀", "🥩", "🐟", "🥦", "🥕", "🍌",
-  "🧼", "🧽", "🧴", "🧻", "🧹", "🧺", "💊", "🩹", "🪥", "🧴",
-];
-
-const categoryOptions: { id: ShoppingCategory; label: string }[] = [
-  { id: "food", label: "Alimentos" },
-  { id: "cleaning", label: "Limpeza" },
-  { id: "hygiene", label: "Higiene" },
-  { id: "health", label: "Farmácia" },
-  { id: "home", label: "Casa" },
-];
-
-export default function AddShoppingItemPage() {
+export default function ShoppingAddPage() {
   const router = useRouter();
-  const addShoppingItem = useAppStore((state) => state.addShoppingItem);
-
-  const [label, setLabel] = useState("");
-  const [emoji, setEmoji] = useState("🛒");
-  const [category, setCategory] = useState<ShoppingCategory>("food");
+  const { addShoppingItem } = useAppStore();
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("food");
 
   const handleSave = async () => {
-    if (!label.trim()) {
-      alert("Por favor, digite o nome do item");
-      return;
-    }
+    if (!name.trim()) return;
 
-    await addShoppingItem(label, emoji, category);
+    const categories: Record<string, string> = {
+      food: "🍎",
+      cleaning: "🧼",
+      hygiene: "🧴",
+      health: "💊",
+      home: "🏠",
+    };
+
+    const emoji = categories[category] || "🛒";
+    await addShoppingItem(name, emoji, category as any);
     router.push("/shopping");
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavigationBar title="Adicionar Item" onBackClick={() => router.back()} />
+    <div className="bg-background min-h-screen flex flex-col font-sans antialiased">
+      <header className="sticky top-0 z-20 bg-background border-b border-border shadow-sm transition-colors duration-200">
+        <div className="px-4 py-6 flex items-center justify-between gap-4">
+          <button
+            onClick={() => router.push("/shopping")}
+            aria-label="Voltar"
+            className="flex items-center justify-center w-14 h-14 bg-card rounded-full border-2 border-border shadow-sm active:scale-95 transition-transform shrink-0"
+          >
+            <span className="material-symbols-outlined text-3xl text-primary font-bold">
+              arrow_back
+            </span>
+          </button>
+          <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight text-center leading-tight">
+            Novo Item
+          </h1>
+          <div className="w-10"></div>
+        </div>
+      </header>
 
-      <main className="flex-1 flex flex-col px-6 pt-8 pb-10 justify-between max-w-md mx-auto w-full">
-        <div className="flex flex-col gap-6 flex-grow">
-          {/* Preview do emoji selecionado */}
-          <div className="flex flex-col items-center gap-4 py-8">
-            <GlassContainer
-              rounded="full"
-              opacity="high"
-              className="w-32 h-32 flex items-center justify-center"
-            >
-              <Text variant="body" className="text-6xl">
-                {emoji}
-              </Text>
-            </GlassContainer>
-            <Text variant="body" size="lg" color="secondary">
-              Toque em um emoji abaixo
-            </Text>
-          </div>
-
-          {/* Seletor de emoji */}
-          <div className="grid grid-cols-5 gap-3">
-            {emojis.map((e) => (
-              <GlassContainer
-                key={e}
-                rounded="lg"
-                opacity={emoji === e ? "high" : "medium"}
-                className={`aspect-square flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all ${
-                  emoji === e ? "ring-2 ring-white/50" : ""
-                }`}
-                onClick={() => setEmoji(e)}
-              >
-                <Text variant="body" className="text-3xl">
-                  {e}
-                </Text>
-              </GlassContainer>
-            ))}
-          </div>
-
-          {/* Nome do item */}
-          <Input
-            label="Nome do Item"
-            placeholder="Ex: Maçã"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
+      <main className="flex-1 px-6 py-8 w-full max-w-md mx-auto flex flex-col gap-8">
+        <div className="space-y-4">
+          <label htmlFor="item-name" className="text-2xl font-bold ml-1 text-foreground">
+            O que precisa comprar?
+          </label>
+          <input
+            id="item-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex: Leite, Sabão em pó..."
+            className="w-full bg-card border-2 border-border rounded-3xl p-6 text-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all shadow-inner"
+            autoFocus
           />
-
-          {/* Categoria */}
-          <div>
-            <Text
-              variant="label"
-              size="lg"
-              color="white"
-              className="block mb-2"
-            >
-              Categoria
-            </Text>
-            <div className="grid grid-cols-2 gap-3">
-              {categoryOptions.map((cat) => (
-                <GlassContainer
-                  key={cat.id}
-                  rounded="lg"
-                  opacity={category === cat.id ? "high" : "medium"}
-                  className={`p-4 cursor-pointer hover:bg-white/20 transition-all text-center ${
-                    category === cat.id ? "ring-2 ring-white/50" : ""
-                  }`}
-                  onClick={() => setCategory(cat.id)}
-                >
-                  <Text
-                    variant="label"
-                    size="base"
-                    color="white"
-                  >
-                    {cat.label}
-                  </Text>
-                </GlassContainer>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Botão salvar */}
-        <footer className="pb-4">
-          <GlassContainer
-            rounded="xl"
-            opacity="high"
-            className="w-full h-20 flex items-center justify-center cursor-pointer bg-senior-yellow/60 hover:bg-senior-yellow/80 transition-all"
-            onClick={handleSave}
-          >
-            <Text variant="heading" size="2xl" className="text-gray-900">
-              Adicionar à Lista
-            </Text>
-          </GlassContainer>
-        </footer>
+        <div className="space-y-4">
+          <span className="text-2xl font-bold ml-1 block text-foreground">
+            Qual categoria?
+          </span>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { id: "food", label: "Alimento", emoji: "🍎" },
+              { id: "cleaning", label: "Limpeza", emoji: "🧼" },
+              { id: "hygiene", label: "Higiene", emoji: "🧴" },
+              { id: "health", label: "Farmácia", emoji: "💊" },
+              { id: "home", label: "Casa", emoji: "🏠" },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategory(cat.id)}
+                className={`flex flex-col items-center justify-center gap-4 p-4 rounded-3xl border-4 transition-all ${
+                  category === cat.id
+                    ? "bg-primary border-primary shadow-[0_0_20px_rgba(37,99,235,0.5)] scale-[1.02] text-white"
+                    : "bg-card border-border text-muted-foreground hover:bg-accent"
+                }`}
+              >
+                <span className="text-4xl">{cat.emoji}</span>
+                <span className="text-lg font-bold">{cat.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       </main>
+
+      <div className="p-6 pb-12 w-full max-w-md mx-auto">
+        <Button
+          size="lg"
+          className="w-full h-20 text-2xl rounded-full gap-3 shadow-xl"
+          onClick={handleSave}
+          disabled={!name.trim()}
+          variant={name.trim() ? "default" : "secondary"}
+        >
+          <span className="material-symbols-outlined text-4xl">
+            check_circle
+          </span>
+          Salvar Item
+        </Button>
+      </div>
     </div>
   );
 }

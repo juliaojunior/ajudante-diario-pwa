@@ -5,16 +5,10 @@ export const metadata: Metadata = {
   title: "Ajudante Diário",
   description: "Assistente diário para idosos - Medicamentos e Compras",
   manifest: "/manifest.json",
-  themeColor: "#B794F6",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+  themeColor: "#0056D2",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "Ajudante",
   },
 };
@@ -29,11 +23,10 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </head>
-      <body className="gradient-background tap-highlight-transparent">
-        <div className="min-h-screen w-full max-w-4xl mx-auto">
-          {children}
-        </div>
+      <body className="tap-highlight-transparent">
+        {children}
       </body>
     </html>
   );
