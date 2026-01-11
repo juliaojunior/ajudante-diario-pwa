@@ -5,26 +5,6 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAppStore, getNextDose } from "@/lib/store";
-import { Button } from "@/components/ui/button";
-
-const Header = () => (
-  <header className="flex justify-between items-center px-2 py-1 flex-shrink-0">
-    <div className="flex flex-col">
-      <h1 className="text-xl font-bold text-foreground leading-tight">Bom dia</h1>
-      <p className="text-sm font-medium text-muted-foreground capitalize">
-        {format(new Date(), "EEEE, d 'de' MMM", { locale: ptBR })}
-      </p>
-    </div>
-    <div className="h-10 w-10 bg-slate-200 rounded-full overflow-hidden flex items-center justify-center dark:bg-slate-800">
-      <span
-        className="material-symbols-outlined text-muted-foreground"
-        style={{ fontSize: "24px", fontVariationSettings: "'FILL' 0" }}
-      >
-        settings
-      </span>
-    </div>
-  </header>
-);
 
 export default function Dashboard() {
   const router = useRouter();
@@ -48,154 +28,205 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col p-4 gap-4 bg-background">
-      <Header />
+    <div className="min-h-screen w-full flex flex-col p-4 gap-4 bg-slate-100">
+      {/* Header */}
+      <header className="flex justify-between items-start px-2 py-2">
+        <div className="flex flex-col">
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+            Bom dia
+          </h1>
+          <p className="text-lg font-medium text-gray-500 capitalize">
+            {format(new Date(), "EEEE, d 'De' MMM", { locale: ptBR })}
+          </p>
+        </div>
+        <button className="h-16 w-16 bg-gray-200 rounded-full flex items-center justify-center">
+          <span
+            className="material-symbols-outlined text-gray-600"
+            style={{ fontSize: "32px", fontVariationSettings: "'FILL' 0" }}
+          >
+            settings
+          </span>
+        </button>
+      </header>
 
-      <main className="flex-1 flex flex-col gap-4 min-h-0">
+      <main className="flex-1 flex flex-col gap-4 min-h-0 mt-4">
         {/* Card de Medicamentos (maior) */}
-        <Button
-          variant="dashboard-blue"
-          size="card"
+        <button
           onClick={handleMedClick}
-          className="flex-[1.3] group"
+          className="relative flex flex-col justify-between p-6 rounded-[40px] shadow-lg overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, #0056D2 0%, #003d99 100%)",
+            minHeight: "420px",
+          }}
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-          <div className="w-full flex justify-between items-start z-10">
-            <div className="flex flex-col items-start gap-1">
-              <span className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-white/90 text-sm font-semibold tracking-wide border border-white/10">
+          {/* Círculos decorativos */}
+          <div
+            className="absolute rounded-full opacity-20"
+            style={{
+              background: "rgba(255,255,255,0.3)",
+              width: "200px",
+              height: "200px",
+              top: "-50px",
+              right: "-50px",
+            }}
+          ></div>
+          <div
+            className="absolute rounded-full opacity-15"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              width: "300px",
+              height: "300px",
+              bottom: "-100px",
+              left: "-100px",
+            }}
+          ></div>
+
+          {/* Conteúdo */}
+          <div className="relative z-10 flex flex-col gap-4">
+            <div className="flex justify-between items-start">
+              <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full">
                 <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "18px" }}
+                  className="material-symbols-outlined text-blue-600"
+                  style={{ fontSize: "20px", fontVariationSettings: "'FILL' 1" }}
                 >
                   medication
                 </span>
-                {hasMed ? "PRÓXIMA DOSE" : "NOVO"}
-              </span>
-              <h2 className="text-primary-foreground text-4xl font-bold mt-2 tracking-tight">
-                {hasMed ? "Medicamentos" : "Adicionar Remédio"}
-              </h2>
+                <span className="text-blue-900 text-sm font-bold tracking-wide uppercase">
+                  {hasMed ? "PRÓXIMA DOSE" : "NOVO"}
+                </span>
+              </div>
+              {hasMed && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push("/medication/add");
+                    }}
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-md p-2 rounded-full transition-colors border border-white/20 active:scale-95"
+                  >
+                    <span
+                      className="material-symbols-outlined text-white"
+                      style={{ fontSize: "24px" }}
+                    >
+                      add
+                    </span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push("/medication/list");
+                    }}
+                    className="bg-white/20 hover:bg-white/30 backdrop-blur-md p-2 rounded-full transition-colors border border-white/20 active:scale-95"
+                  >
+                    <span
+                      className="material-symbols-outlined text-white"
+                      style={{ fontSize: "24px" }}
+                    >
+                      list
+                    </span>
+                  </button>
+                </div>
+              )}
             </div>
-            {/* Botões de ação */}
-            {hasMed && (
-              <>
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push("/medication/add");
-                  }}
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur-md p-3 rounded-full transition-colors cursor-pointer border border-white/10 active:scale-95"
-                >
-                  <span
-                    className="material-symbols-outlined text-white"
-                    style={{ fontSize: "28px" }}
-                  >
-                    add
-                  </span>
-                </div>
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push("/medication/list");
-                  }}
-                  className="bg-white/20 hover:bg-white/30 backdrop-blur-md p-3 rounded-full transition-colors cursor-pointer border border-white/10 active:scale-95 ml-2"
-                >
-                  <span
-                    className="material-symbols-outlined text-white"
-                    style={{ fontSize: "28px" }}
-                  >
-                    list
-                  </span>
-                </div>
-              </>
-            )}
+
+            <h2 className="text-white text-5xl font-bold tracking-tight mt-2">
+              Medicamentos
+            </h2>
           </div>
-          <div className="flex flex-row items-end justify-between w-full mt-4 gap-4 z-10">
+
+          {/* Horário e Foto */}
+          <div className="relative z-10 flex items-end justify-between mt-auto">
             <div className="flex flex-col">
-              <span className="text-blue-100 text-lg font-medium mb-1">
+              <span className="text-white/80 text-xl font-medium mb-1">
                 Horário
               </span>
-              <p className="text-white text-[5rem] leading-[0.9] font-bold tracking-tighter drop-shadow-sm">
+              <p
+                className="text-white font-bold tracking-tight"
+                style={{ fontSize: "120px", lineHeight: "0.9" }}
+              >
                 {hasMed ? nextMed.time : "--:--"}
               </p>
             </div>
             {hasMed && nextMed.image && (
               <div
-                className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden bg-white/10 border-2 border-white/20 shadow-inner shrink-0"
+                className="w-40 h-40 rounded-3xl overflow-hidden border-4 border-white/30 shadow-2xl shrink-0"
                 style={{
                   backgroundImage: `url("${nextMed.image}")`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
-            )}
-            {!hasMed && (
-              <div className="flex items-center justify-center w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-white/10 border-2 border-dashed border-white/30 shrink-0">
-                <span
-                  className="material-symbols-outlined text-white/50"
-                  style={{ fontSize: "48px" }}
-                >
-                  add
-                </span>
-              </div>
+              ></div>
             )}
           </div>
-          <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            <span
-              className="material-symbols-outlined text-white/80"
-              style={{ fontSize: "48px" }}
-            >
-              arrow_circle_right
-            </span>
-          </div>
-        </Button>
+        </button>
 
         {/* Cards de Compras e Emergência (lado a lado) */}
-        <div className="flex-1 flex gap-4 min-h-0">
-          <Button
-            variant="dashboard-yellow"
-            size="card"
+        <div className="flex gap-4 min-h-[240px]">
+          <button
             onClick={() => router.push("/shopping")}
-            className="w-1/2"
+            className="relative flex-1 flex flex-col items-center justify-center p-6 rounded-[40px] shadow-lg overflow-hidden"
+            style={{ background: "#F9A825" }}
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent pointer-events-none"></div>
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-yellow-900/10 rounded-full flex items-center justify-center mb-2">
-              <span
-                className="material-symbols-outlined text-foreground"
-                style={{ fontSize: "48px", fontVariationSettings: "'FILL' 1" }}
-              >
-                shopping_basket
-              </span>
-            </div>
-            <h2 className="text-foreground text-2xl md:text-3xl font-bold text-center leading-tight">
-              Compras
-            </h2>
+            {/* Círculo decorativo */}
             <div
-              aria-label="Notificação"
-              className="absolute top-4 right-4 h-3 w-3 bg-destructive rounded-full animate-pulse border border-white/40 shadow-sm"
+              className="absolute rounded-full"
+              style={{
+                background: "rgba(0,0,0,0.05)",
+                width: "180px",
+                height: "180px",
+                top: "-60px",
+                right: "-60px",
+              }}
             ></div>
-          </Button>
-
-          <Button
-            variant="dashboard-red"
-            size="card"
-            onClick={() => window.open("tel:190")}
-            className="w-1/2"
-          >
-            <div className="absolute inset-0 bg-gradient-to-bl from-white/10 to-transparent pointer-events-none"></div>
-            <div className="w-20 h-20 md:w-24 md:h-24 bg-white/20 rounded-full flex items-center justify-center mb-2 animate-[pulse_3s_ease-in-out_infinite]">
-              <span
-                className="material-symbols-outlined text-white"
-                style={{ fontSize: "48px", fontVariationSettings: "'FILL' 1" }}
-              >
-                phone_in_talk
-              </span>
+            <div
+              className="absolute top-4 right-4 h-3 w-3 bg-red-500 rounded-full animate-pulse border-2 border-white shadow-sm"
+              aria-label="Notificação"
+            ></div>
+            <div className="relative z-10 flex flex-col items-center gap-4">
+              <div className="w-24 h-24 bg-black/80 rounded-full flex items-center justify-center">
+                <span
+                  className="material-symbols-outlined text-yellow-400"
+                  style={{ fontSize: "48px", fontVariationSettings: "'FILL' 1" }}
+                >
+                  shopping_basket
+                </span>
+              </div>
+              <h2 className="text-black text-3xl font-bold text-center leading-tight">
+                Compras
+              </h2>
             </div>
-            <h2 className="text-white text-2xl md:text-3xl font-bold text-center leading-tight uppercase tracking-wide">
-              Emergência
-            </h2>
-          </Button>
+          </button>
+
+          <button
+            onClick={() => window.open("tel:190")}
+            className="relative flex-1 flex flex-col items-center justify-center p-6 rounded-[40px] shadow-lg overflow-hidden"
+            style={{ background: "#D32F2F" }}
+          >
+            {/* Círculo decorativo */}
+            <div
+              className="absolute rounded-full"
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                width: "180px",
+                height: "180px",
+                bottom: "-60px",
+                left: "-60px",
+              }}
+            ></div>
+            <div className="relative z-10 flex flex-col items-center gap-4">
+              <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center animate-[pulse_3s_ease-in-out_infinite]">
+                <span
+                  className="material-symbols-outlined text-white"
+                  style={{ fontSize: "48px", fontVariationSettings: "'FILL' 1" }}
+                >
+                  phone_in_talk
+                </span>
+              </div>
+              <h2 className="text-white text-3xl font-bold text-center leading-tight uppercase tracking-wide">
+                Emergência
+              </h2>
+            </div>
+          </button>
         </div>
       </main>
     </div>

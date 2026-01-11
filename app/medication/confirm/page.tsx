@@ -1,128 +1,107 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@/lib/store";
-import { NavigationBar } from "@/components/organisms/NavigationBar";
-import { GlassContainer } from "@/components/atoms/GlassContainer";
-import { Text } from "@/components/atoms/Text";
-import { Icon } from "@/components/atoms/Icon";
-import { TimeDisplay } from "@/components/molecules/TimeDisplay";
-import type { Medication } from "@/lib/types";
 
-function ConfirmMedicationContent() {
+function ConfirmContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const medId = searchParams.get("id");
+  const id = searchParams.get("id");
 
   const { medications, confirmMedication } = useAppStore();
-  const [medication, setMedication] = useState<Medication | null>(null);
+  const med = medications.find((m) => m.id === id);
 
-  useEffect(() => {
-    if (medId) {
-      const med = medications.find((m) => m.id === medId);
-      setMedication(med || null);
-    }
-  }, [medId, medications]);
-
-  const handleConfirm = async () => {
-    if (medication) {
-      await confirmMedication(medication.id);
-      router.push("/");
-    }
-  };
-
-  if (!medication) {
+  if (!med) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Text variant="heading" size="2xl" color="white">
-          Medicamento não encontrado
-        </Text>
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-2xl text-gray-600 mb-6">Medicamento não encontrado</p>
+          <button
+            onClick={() => router.push("/")}
+            className="px-8 py-4 bg-blue-600 text-white rounded-full text-xl font-bold"
+          >
+            Voltar
+          </button>
+        </div>
       </div>
     );
   }
 
+  const handleConfirm = async () => {
+    await confirmMedication(id!);
+    router.push("/");
+  };
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <NavigationBar title="Confirmar Dose" onBackClick={() => router.back()} />
+    <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-between p-6 pb-12">
+      {/* Foto do medicamento */}
+      <div className="w-full max-w-md mt-12">
+        <div
+          className="w-full aspect-square rounded-[60px] overflow-hidden shadow-2xl"
+          style={{
+            backgroundImage: `url("${med.image}")`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            border: "8px solid #334155",
+          }}
+        ></div>
+      </div>
 
-      <main className="flex-1 flex flex-col px-6 pt-8 pb-10 justify-between max-w-md mx-auto w-full">
-        <div className="flex flex-col gap-8 flex-grow justify-center">
-          {/* Card do medicamento */}
-          <GlassContainer
-            rounded="xl"
-            opacity="high"
-            className="p-6 bg-gradient-to-br from-senior-blue/40 to-senior-blue/20"
-          >
-            <div className="flex flex-col gap-6">
-              {/* Imagem */}
-              {medication.image && (
-                <div className="relative w-full h-64 rounded-xl overflow-hidden">
-                  <img
-                    src={medication.image}
-                    alt={medication.name}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                </div>
-              )}
-
-              {/* Nome */}
-              <Text variant="heading" size="4xl" color="white">
-                {medication.name}
-              </Text>
-
-              {/* Horário */}
-              <TimeDisplay time={medication.time} label="Horário da dose" />
-            </div>
-          </GlassContainer>
-
-          {/* Mensagem */}
-          <div className="text-center">
-            <Text variant="body" size="xl" color="secondary">
-              Você tomou este medicamento agora?
-            </Text>
+      {/* Horário */}
+      <div className="flex flex-col items-center gap-4 my-12">
+        <div className="flex items-center gap-3">
+          <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+            <span
+              className="material-symbols-outlined text-gray-500"
+              style={{ fontSize: "32px", fontVariationSettings: "'FILL' 1" }}
+            >
+              schedule
+            </span>
           </div>
+          <p
+            className="text-gray-400 font-bold"
+            style={{ fontSize: "80px", lineHeight: "1" }}
+          >
+            {med.time}
+          </p>
         </div>
+      </div>
 
-        {/* Botões de ação */}
-        <footer className="flex flex-col gap-4 pb-4">
-          <GlassContainer
-            rounded="xl"
-            opacity="high"
-            className="w-full h-24 flex items-center justify-center cursor-pointer bg-green-600/40 hover:bg-green-600/60 transition-all gap-4"
-            onClick={handleConfirm}
+      {/* Botão confirmar */}
+      <button
+        onClick={handleConfirm}
+        className="w-full max-w-md py-6 rounded-full shadow-xl flex items-center justify-center gap-4 active:scale-[0.98] transition-transform"
+        style={{
+          background: "linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)",
+        }}
+      >
+        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+          <span
+            className="material-symbols-outlined text-green-700"
+            style={{ fontSize: "40px", fontVariationSettings: "'FILL' 1" }}
           >
-            <Icon name="check_circle" size={40} className="text-white" />
-            <Text variant="heading" size="2xl" color="white">
-              Sim, tomei!
-            </Text>
-          </GlassContainer>
-
-          <GlassContainer
-            rounded="xl"
-            opacity="medium"
-            className="w-full h-16 flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all"
-            onClick={() => router.back()}
-          >
-            <Text variant="label" size="lg" color="white">
-              Não, ainda não
-            </Text>
-          </GlassContainer>
-        </footer>
-      </main>
+            check
+          </span>
+        </div>
+        <span className="text-white text-4xl font-bold tracking-wide uppercase">
+          Já Tomei
+        </span>
+      </button>
     </div>
   );
 }
 
 export default function ConfirmMedicationPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">Carregando...</div>
-      </div>
-    }>
-      <ConfirmMedicationContent />
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center">
+          <p className="text-2xl text-gray-600">Carregando...</p>
+        </div>
+      }
+    >
+      <ConfirmContent />
     </Suspense>
   );
 }

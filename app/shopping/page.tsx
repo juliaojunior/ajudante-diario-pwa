@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store";
 
 const categories = [
-  { id: "food", label: "Alimentos", color: "bg-primary" },
-  { id: "cleaning", label: "Limpeza", color: "bg-primary" },
-  { id: "hygiene", label: "Higiene", color: "bg-primary" },
-  { id: "health", label: "Farmácia", color: "bg-primary" },
-  { id: "home", label: "Casa", color: "bg-primary" },
+  { id: "food", label: "ALIMENTOS", color: "bg-blue-600" },
+  { id: "cleaning", label: "LIMPEZA", color: "bg-blue-600" },
+  { id: "hygiene", label: "HIGIENE", color: "bg-blue-600" },
+  { id: "health", label: "FARMÁCIA", color: "bg-blue-600" },
+  { id: "home", label: "CASA", color: "bg-blue-600" },
 ];
 
 export default function ShoppingListPage() {
@@ -27,79 +27,114 @@ export default function ShoppingListPage() {
     shoppingItems.filter((i) => i.category === catId);
 
   return (
-    <div className="bg-background font-sans antialiased min-h-screen flex flex-col">
-      <header className="sticky top-0 z-20 bg-background border-b border-border shadow-sm transition-colors duration-200">
-        <div className="px-4 py-6 flex items-center justify-between gap-4">
+    <div className="bg-slate-100 min-h-screen flex flex-col pb-32">
+      {/* Header */}
+      <header className="sticky top-0 z-20 bg-slate-100 px-4 py-6">
+        <div className="flex items-center justify-between gap-4">
           <button
             onClick={() => router.push("/")}
             aria-label="Voltar"
-            className="flex items-center justify-center w-14 h-14 bg-card rounded-full border-2 border-border shadow-sm active:scale-95 transition-transform shrink-0"
+            className="flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-md active:scale-95 transition-transform shrink-0"
           >
-            <span className="material-symbols-outlined text-3xl text-primary font-bold">
+            <span
+              className="material-symbols-outlined text-blue-600 font-bold"
+              style={{ fontSize: "32px", fontVariationSettings: "'FILL' 0" }}
+            >
               arrow_back
             </span>
           </button>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight text-center leading-tight">
-            Minha Lista de Compras
+          <h1 className="text-3xl font-bold text-gray-900 text-center leading-tight flex-1">
+            Minha Lista<br />de Compras
           </h1>
           <button
-            aria-label="Configurações"
-            className="flex items-center justify-center w-14 h-14 bg-card rounded-full border-2 border-border shadow-sm active:scale-95 transition-transform shrink-0"
+            aria-label="Acessibilidade"
+            className="flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-md active:scale-95 transition-transform shrink-0"
           >
-            <span className="material-symbols-outlined text-3xl text-primary">
-              settings_accessibility
+            <span
+              className="material-symbols-outlined text-blue-600"
+              style={{ fontSize: "32px", fontVariationSettings: "'FILL' 1" }}
+            >
+              accessibility
             </span>
           </button>
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-6 pb-32 max-w-md mx-auto w-full flex flex-col gap-8">
+      {/* Conteúdo */}
+      <main className="flex-1 px-4 py-6 max-w-md mx-auto w-full flex flex-col gap-8">
         {categories.map((cat) => {
           const items = getItemsByCategory(cat.id);
           if (items.length === 0) return null;
 
           return (
             <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
-              <div className="flex items-center gap-3 mb-4 pl-2 mt-2">
-                <div className={`w-2 h-8 rounded-full ${cat.color}`}></div>
+              {/* Cabeçalho da categoria */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className={`w-1.5 h-10 rounded-full ${cat.color}`}></div>
                 <h2
-                  className="text-2xl font-bold text-foreground uppercase tracking-wide"
+                  className="text-3xl font-black text-gray-900 uppercase tracking-tight"
                   id={`cat-${cat.id}`}
                 >
                   {cat.label}
                 </h2>
               </div>
+
+              {/* Items */}
               <div className="flex flex-col gap-4">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2">
-                    {/* CheckboxItem inline */}
-                    <div className="flex-1 flex items-center gap-4 bg-card p-4 rounded-2xl border-2 border-border shadow-sm">
-                      <input
-                        type="checkbox"
-                        checked={item.checked}
-                        onChange={() => toggleShoppingItem(item.id)}
-                        className="custom-checkbox"
-                      />
-                      <span className="text-4xl">{item.emoji}</span>
+                  <div key={item.id} className="flex items-center gap-3">
+                    {/* Container do item */}
+                    <div className="flex-1 flex items-center gap-4 bg-white p-5 rounded-[32px] shadow-md">
+                      <span className="text-5xl" role="img" aria-label={item.label}>
+                        {item.emoji}
+                      </span>
                       <span
-                        className={`text-xl font-semibold ${
+                        className={`text-2xl font-bold flex-1 ${
                           item.checked
-                            ? "line-through text-muted-foreground"
-                            : "text-foreground"
+                            ? "line-through text-gray-400"
+                            : "text-gray-900"
                         }`}
                       >
                         {item.label}
                       </span>
+                      <button
+                        onClick={() => toggleShoppingItem(item.id)}
+                        className="shrink-0"
+                        aria-label={item.checked ? "Desmarcar" : "Marcar como comprado"}
+                      >
+                        <div
+                          className={`w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all ${
+                            item.checked
+                              ? "bg-blue-600 border-blue-600"
+                              : "bg-white border-blue-600"
+                          }`}
+                        >
+                          {item.checked && (
+                            <span
+                              className="material-symbols-outlined text-white"
+                              style={{ fontSize: "28px", fontVariationSettings: "'FILL' 1" }}
+                            >
+                              check
+                            </span>
+                          )}
+                        </div>
+                      </button>
                     </div>
+
+                    {/* Botão delete */}
                     <button
                       onClick={() => {
                         if (window.confirm(`Apagar "${item.label}"?`)) {
                           deleteShoppingItem(item.id);
                         }
                       }}
-                      className="flex items-center justify-center w-14 h-14 bg-red-100 rounded-full shrink-0 border border-red-200 active:scale-95"
+                      className="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full shrink-0 shadow-md active:scale-95 transition-transform"
+                      aria-label="Apagar item"
                     >
-                      <span className="material-symbols-outlined text-3xl text-red-600">
+                      <span
+                        className="material-symbols-outlined text-red-600"
+                        style={{ fontSize: "32px", fontVariationSettings: "'FILL' 1" }}
+                      >
                         delete
                       </span>
                     </button>
@@ -111,16 +146,28 @@ export default function ShoppingListPage() {
         })}
       </main>
 
-      <div className="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-background via-background to-transparent pb-8 pointer-events-none">
-        <div className="max-w-md mx-auto pointer-events-auto">
+      {/* Botão adicionar fixo */}
+      <div className="fixed bottom-0 left-0 w-full p-4 pb-8">
+        <div className="max-w-md mx-auto">
           <button
             onClick={() => router.push("/shopping/add")}
-            className="w-full flex items-center justify-center gap-3 bg-secondary hover:bg-secondary/90 text-black font-bold text-xl py-5 px-8 rounded-full shadow-lg transform active:scale-[0.98] transition-all border-4 border-yellow-600"
+            className="w-full flex items-center justify-center gap-4 py-6 rounded-full shadow-2xl transform active:scale-[0.98] transition-all"
+            style={{
+              background: "linear-gradient(135deg, #F9A825 0%, #F57F17 100%)",
+              border: "4px solid #F57F17",
+            }}
           >
-            <span className="material-symbols-outlined text-4xl font-bold">
-              add_circle
+            <div className="w-14 h-14 bg-black rounded-full flex items-center justify-center">
+              <span
+                className="material-symbols-outlined text-yellow-400"
+                style={{ fontSize: "36px", fontVariationSettings: "'FILL' 1" }}
+              >
+                add
+              </span>
+            </div>
+            <span className="text-black text-2xl font-bold">
+              Adicionar Item
             </span>
-            <span>Adicionar Item</span>
           </button>
         </div>
       </div>
